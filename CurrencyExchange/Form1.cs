@@ -10,8 +10,19 @@ namespace CurrencyExchange
             InitializeComponent();
             //instancja klasy Exchange - wywo³anie konstruktora
             exchange = new Exchange();
-        }
+            //przygotuj dwa obiekty typu bindingSource
+            BindingSource inputCurrentcyBinding = new BindingSource();
+            inputCurrentcyBinding.DataSource = exchange.currencies;
+            BindingSource outputCurrentcyBinding = new BindingSource();
+            outputCurrentcyBinding.DataSource = exchange.currencies;
 
+            InputCurrencyComboBox.DataSource = inputCurrentcyBinding;
+            InputCurrencyComboBox.DisplayMember = "Name"; //co ma byæ wyœwietlane
+            InputCurrencyComboBox.ValueMember = "Code"; //co ma byæ wartoœci¹
+            OutputCurrencyComboBox.DataSource = outputCurrentcyBinding;
+            OutputCurrencyComboBox.DisplayMember = "Name"; //co ma byæ wyœwietlane
+            OutputCurrencyComboBox.ValueMember = "Code"; //co ma byæ wartoœci¹
+        }
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             //poprzednia metoda konwersji
@@ -32,11 +43,11 @@ namespace CurrencyExchange
             
             //sprawdŸ który radiobutton jest zaznaczony i wykonaj metodê z parametrem
             if (EurToPlnRadio.Checked)
-                result = exchange.ToPLN(currency, Currency.EUR);
+                result = exchange.ToPLN(currency, exchange.GetFromCode("EUR"));
             if (UsdToPlnRadio.Checked)
-                result = exchange.ToPLN(currency, Currency.USD);
+                result = exchange.ToPLN(currency, exchange.GetFromCode("USD"));
             if (GbpToPlnRadio.Checked)
-                result = exchange.ToPLN(currency, Currency.GBP);
+                result = exchange.ToPLN(currency, exchange.GetFromCode("GBP"));
 
             //wyœwietl wynik w textBox2 z dwoma miejscami po przecinku
             textBox2.Text = result.ToString("0.00");
