@@ -47,18 +47,32 @@ namespace CurrencyExchange
             //wyci¹gamy sobie kod z obiektu
             string inputCurrencyCode = inputCurrency.Code;
 
-            //najpierw przeliczamy na z³otówki
-            //dzielimy kwotê z pierwszego inputa przez kurs waluty wybranej w pierwszym comboboxie
-            double ammountInPLN = exchange.ToPLN(inputAmmount, exchange.GetFromCode(inputCurrencyCode));
+            // gdy zamieniamy zotówki na walutê docelow¹ to kurs podwyzszony o 2%
+            if (inputCurrencyCode == "PLN" && OutputCurrencyComboBox.SelectedItem is Currency outputCurrency1)
+            {
+                string outputCurrencyCode = outputCurrency1.Code;
+                double outputRate = exchange.GetFromCode(outputCurrencyCode).Rate * 1.02; //kurs podwy¿szony o 2%
+                outputAmmount = inputAmmount / outputRate;
+            }
+            //gdy zamieniamy inna walute na zlotowki kurs obni¿ony o 2%
+            else if (OutputCurrencyComboBox.SelectedItem is Currency outputCurrency2 && outputCurrency2.Code == "PLN")
+            {
+                double inputRate = exchange.GetFromCode(inputCurrencyCode).Rate * 0.98; //kurs obni¿ony o 2%
+                outputAmmount = inputAmmount * inputRate;
+            }
 
-            //nastêpnie zamieniamy ze z³otówek na walutê docelow¹
-            //pobieramy symbol waluty docelowej
-            Currency outputCurrency = (Currency)OutputCurrencyComboBox.SelectedItem;
-            string outputCurrencyCode = outputCurrency.Code;
-            //pobieramy kurs waluty docelowej
-            double outputRate = exchange.GetFromCode(outputCurrencyCode).Rate;
-            //mno¿ymy
-            outputAmmount = ammountInPLN / outputRate;
+            ////najpierw przeliczamy na z³otówki
+            ////dzielimy kwotê z pierwszego inputa przez kurs waluty wybranej w pierwszym comboboxie
+            //double ammountInPLN = exchange.ToPLN(inputAmmount, exchange.GetFromCode(inputCurrencyCode));
+
+            ////nastêpnie zamieniamy ze z³otówek na walutê docelow¹
+            ////pobieramy symbol waluty docelowej
+            //Currency outputCurrency = (Currency)OutputCurrencyComboBox.SelectedItem;
+            //string outputCurrencyCode = outputCurrency.Code;
+            ////pobieramy kurs waluty docelowej
+            //double outputRate = exchange.GetFromCode(outputCurrencyCode).Rate;
+            ////mno¿ymy
+            //outputAmmount = ammountInPLN / outputRate;
 
 
 
