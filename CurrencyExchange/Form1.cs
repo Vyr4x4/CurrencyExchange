@@ -29,7 +29,7 @@ namespace CurrencyExchange
             //double currency = double.Parse(textBox1.Text);
             //nowa metoda konwersji
             //sprawdŸ czy mo¿na przekonwertowaæ, jeœli tak to zapisz w currency
-            if (!double.TryParse(textBox1.Text, out double currency))
+            if (!double.TryParse(textBox1.Text, out double inputAmmount))
             {
                 //nie uda³o siê przekonwertowaæ
                 textBox1.BackColor = Color.Red;
@@ -37,20 +37,34 @@ namespace CurrencyExchange
             }
             else //uda³o siê przekonwertowaæ
                 textBox1.BackColor = Color.White;
-            
+
             //zmienna na przeliczon¹ kwotê
-            double result = 0.0;
-            
-            //sprawdŸ który radiobutton jest zaznaczony i wykonaj metodê z parametrem
-            if (EurToPlnRadio.Checked)
-                result = exchange.ToPLN(currency, exchange.GetFromCode("EUR"));
-            if (UsdToPlnRadio.Checked)
-                result = exchange.ToPLN(currency, exchange.GetFromCode("USD"));
-            if (GbpToPlnRadio.Checked)
-                result = exchange.ToPLN(currency, exchange.GetFromCode("GBP"));
+            double outputAmmount = 0.0;
+
+            //pobieramy symbol pierwszej waluty
+            //najpierw pobieramy _obiekt_ waluty z inputCurrencyComboBox - rzutujemy wybrany elelement na obiekt klasy Currency
+            Currency inputCurrency = (Currency)InputCurrencyComboBox.SelectedItem;
+            //wyci¹gamy sobie kod z obiektu
+            string inputCurrencyCode = inputCurrency.Code;
+
+            //najpierw przeliczamy na z³otówki
+            //dzielimy kwotê z pierwszego inputa przez kurs waluty wybranej w pierwszym comboboxie
+            double ammountInPLN = exchange.ToPLN(inputAmmount, exchange.GetFromCode(inputCurrencyCode));
+
+            //nastêpnie zamieniamy ze z³otówek na walutê docelow¹
+            //pobieramy symbol waluty docelowej
+            Currency outputCurrency = (Currency)OutputCurrencyComboBox.SelectedItem;
+            string outputCurrencyCode = outputCurrency.Code;
+            //pobieramy kurs waluty docelowej
+            double outputRate = exchange.GetFromCode(outputCurrencyCode).Rate;
+            //mno¿ymy
+            outputAmmount = ammountInPLN / outputRate;
+
+
+
 
             //wyœwietl wynik w textBox2 z dwoma miejscami po przecinku
-            textBox2.Text = result.ToString("0.00");
+            textBox2.Text = outputAmmount.ToString("0.00");
         }
     }
 }
